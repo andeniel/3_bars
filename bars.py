@@ -29,57 +29,23 @@ def load_data(file_path):
         return json.load(data_file)
 
 
-def get_biggest_bar(json_data):
-    seats_max = None
-    bar_attribute = None
-    for row in json_data['features']:
-        seats_count = row['properties']['Attributes']['SeatsCount']
-        ok = False
-        if seats_max is None:
-            ok = True
-        elif seats_count > seats_max:
-            ok = True
-        if ok:
-            seats_max = seats_count
-            bar_attribute = row['properties']['Attributes']
-
-    return seats_max, bar_attribute
+def get_biggest_bar(json_data):    
+    bars = json_data['features']    
+    bar_max = max(bars, key=lambda p: p['properties']['Attributes']['SeatsCount'])    
+    return bar_max['properties']['Attributes']
 
 
 def get_smallest_bar(json_data):
-    seats_min = None
-    bar_attribute = None
-    for row in json_data['features']:
-        seats_count = row['properties']['Attributes']['SeatsCount']
-        ok = False
-        if seats_min is None:
-            ok = True
-        elif seats_count < seats_min:
-            ok = True
-
-        if ok:
-            seats_min = seats_count
-            bar_attribute = row['properties']['Attributes']
-
-    return seats_min, bar_attribute
+    bars = json_data['features']    
+    bar_min = min(bars, key=lambda p: p['properties']['Attributes']['SeatsCount'])    
+    return bar_min['properties']['Attributes']
 
 
 def get_closest_bar(json_data, longitude, latitude):
-    min_distance = None
-    bar_attribute = None
-    for row in json_data['features']:
-        current_distance = get_distance(row['geometry']['coordinates'][0], row['geometry']['coordinates'][1], longitude, latitude)
-        ok = False
-        if min_distance is None:
-            ok = True
-        elif current_distance < min_distance:
-            ok = True
-
-        if ok:
-            min_distance = current_distance
-            bar_attribute = row['properties']['Attributes']
-
-    return min_distance, bar_attribute
+    bars = json_data['features']
+    bar_min_dist = min(bars, key=lambda p:get_distance(p['geometry']['coordinates'][0], p['geometry']['coordinates'][1], longitude, latitude))
+    min_dist = get_distance(bar_min_dist['geometry']['coordinates'][0], bar_min_dist['geometry']['coordinates'][1], longitude, latitude)
+    return min_dist, bar_min_dist['properties']['Attributes']
 
 if __name__ == '__main__':
     aparser = argparse.ArgumentParser()
@@ -89,9 +55,9 @@ if __name__ == '__main__':
     args = vars(aparser.parse_args())
     json_data = load_data(args['file'])
 
-    seats_max, bar_attribute = get_biggest_bar(json_data)
-    print("Biggest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Max Seats ->", seats_max)
-    seats_min, bar_attribute = get_smallest_bar(json_data)
-    print("Smallest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Min Seats ->", seats_min)
-    dist_min, bar_attribute = get_closest_bar(json_data,  args["lon"], args["lat"])
-    print("Closest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Distance ->", dist_min, "km")
+    bar_attribute = get_biggest_bar(json_data)
+    print("Biggest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Max Seats ->", bar_attribute['SeatsCount'])
+    bar_attribute = get_smallest_bar(json_data)
+    print("Smallest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Min Seats ->", bar_attribute['SeatsCount'])
+    min_dist, bar_attribute = get_closest_bar(json_data,  args["lon"], args["lat"])
+    print("Closest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Min dist -> ", min_dist, "km")
