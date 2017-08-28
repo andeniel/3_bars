@@ -29,10 +29,10 @@ def load_data(file_path):
         return json.load(data_file)
 
 
-def get_biggest_bar(data):
+def get_biggest_bar(json_data):
     seats_max = None
     bar_attribute = None
-    for row in data['features']:
+    for row in json_data['features']:
         seats_count = row['properties']['Attributes']['SeatsCount']
         ok = False
         if seats_max is None:
@@ -46,10 +46,10 @@ def get_biggest_bar(data):
     return seats_max, bar_attribute
 
 
-def get_smallest_bar(data):
+def get_smallest_bar(json_data):
     seats_min = None
     bar_attribute = None
-    for row in data['features']:
+    for row in json_data['features']:
         seats_count = row['properties']['Attributes']['SeatsCount']
         ok = False
         if seats_min is None:
@@ -64,10 +64,10 @@ def get_smallest_bar(data):
     return seats_min, bar_attribute
 
 
-def get_closest_bar(data, longitude, latitude):
+def get_closest_bar(json_data, longitude, latitude):
     min_distance = None
     bar_attribute = None
-    for row in data['features']:
+    for row in json_data['features']:
         current_distance = get_distance(row['geometry']['coordinates'][0], row['geometry']['coordinates'][1], longitude, latitude)
         ok = False
         if min_distance is None:
@@ -87,11 +87,11 @@ if __name__ == '__main__':
     aparser.add_argument("-ln", "--lon", required=True, help="Longitute")
     aparser.add_argument("-lt", "--lat", required=True, help="Latitude")
     args = vars(aparser.parse_args())
-    jsondata = load_data(args['file'])
+    json_data = load_data(args['file'])
 
-    seats_max, bar_attribute = get_biggest_bar(jsondata)
+    seats_max, bar_attribute = get_biggest_bar(json_data)
     print("Biggest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Max Seats ->", seats_max)
-    seats_min, bar_attribute = get_smallest_bar(jsondata)
+    seats_min, bar_attribute = get_smallest_bar(json_data)
     print("Smallest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Min Seats ->", seats_min)
-    dist_min, bar_attribute = get_closest_bar(jsondata,  args["lon"], args["lat"])
+    dist_min, bar_attribute = get_closest_bar(json_data,  args["lon"], args["lat"])
     print("Closest ->", bar_attribute['Name'], ",", bar_attribute['Address'], "| Distance ->", dist_min, "km")
