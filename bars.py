@@ -18,18 +18,12 @@ def get_distance(lon1, lat1, lon2, lat2):
     a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
-    distance = R * c
-
-    return distance
+    return R * c
 
 def load_data(filepath):
     """func to read a file to data"""
     with open(filepath, 'r') as data_file:
         return json.load(data_file)
-
-def pretty_print_json(data):
-    """func to print json data"""    
-    return json.dumps(data, indent=4, sort_keys=True, ensure_ascii=False)
 
 def get_biggest_bar(data):
     """func to get biggest bar by seatscount"""
@@ -97,13 +91,10 @@ if __name__ == '__main__':
     aparser.add_argument("-lt", "--lat", required=True, help="Latitude")
     args = vars(aparser.parse_args())
     jsondata = load_data(args['file'])
-    # print(pretty_print_json(jsondata))
+
     seats, bar = get_biggest_bar(jsondata)
     print("Biggest ->", bar['Name'], ",", bar['Address'], "| Max Seats ->", seats)
     seats, bar = get_smallest_bar(jsondata)    
     print("Smallest ->", bar['Name'], ",", bar['Address'], "| Min Seats ->", seats)
     dist, bar = get_closest_bar(jsondata,  args["lon"], args["lat"])
     print("Closest ->", bar['Name'], ",", bar['Address'], "| Distance ->", dist,"km")    
-
-    # print(jsondata)
-    
