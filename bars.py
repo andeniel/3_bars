@@ -29,21 +29,21 @@ def load_data(file_path):
         return json.load(data_file)
 
 
-def get_biggest_bar(json_data):    
-    bars = json_data['features']    
-    bar_max = max(bars, key=lambda p: p['properties']['Attributes']['SeatsCount'])    
+def get_biggest_bar(json_data):
+    bars = json_data['features']
+    bar_max = max(bars, key=lambda p: p['properties']['Attributes']['SeatsCount'])
     return bar_max['properties']['Attributes']
 
 
 def get_smallest_bar(json_data):
-    bars = json_data['features']    
-    bar_min = min(bars, key=lambda p: p['properties']['Attributes']['SeatsCount'])    
+    bars = json_data['features']
+    bar_min = min(bars, key=lambda p: p['properties']['Attributes']['SeatsCount'])
     return bar_min['properties']['Attributes']
 
 
 def get_closest_bar(json_data, longitude, latitude):
     bars = json_data['features']
-    bar_min_dist = min(bars, key=lambda p:get_distance(p['geometry']['coordinates'][0], p['geometry']['coordinates'][1], longitude, latitude))
+    bar_min_dist = min(bars, key=lambda p: get_distance(p['geometry']['coordinates'][0], p['geometry']['coordinates'][1], longitude, latitude))
     min_dist = get_distance(bar_min_dist['geometry']['coordinates'][0], bar_min_dist['geometry']['coordinates'][1], longitude, latitude)
     return min_dist, bar_min_dist['properties']['Attributes']
 
