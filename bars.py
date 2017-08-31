@@ -49,8 +49,8 @@ if __name__ == '__main__':
     aparser.add_argument("-f", "--file", required=True, help="Filepath")
     aparser.add_argument("-ln", "--lon", required=True, help="Longitute")
     aparser.add_argument("-lt", "--lat", required=True, help="Latitude")
-    args = vars(aparser.parse_args())
-    json_data = load_data(args['file'])
+    args = aparser.parse_args()
+    json_data = load_data(args.file)
 
     bar_attribute = get_biggest_bar(json_data)
     print(
@@ -63,7 +63,7 @@ if __name__ == '__main__':
         "| Min Seats ->", bar_attribute['SeatsCount'])
 
     min_dist, bar_attribute = get_closest_bar(
-        json_data,  args["lon"], args["lat"])
+        json_data,  args.lon, args.lat)
     print(
         "Closest ->", bar_attribute['Name'], ",", bar_attribute['Address'],
         "| Min dist -> ", min_dist)
