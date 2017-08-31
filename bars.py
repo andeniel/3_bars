@@ -1,20 +1,12 @@
 import json
 import argparse
 from math import sin, cos, sqrt, atan2, radians
+from geomath.point import Point
 
 
 def get_distance(lon1, lat1, lon2, lat2):
-    """
-    func to get Distance beetween two locations
-    return value in KM
-    """
-    lat1 = radians(float(lat1))
-    lon1 = radians(float(lon1))
-    lat2 = radians(float(lat2))
-    lon2 = radians(float(lon2))
-    angle_rad = sin(float(lat2) - float(lat1) / 2)**2 + \
-        cos(lat1) * cos(lat2) * sin(float(lon2) - float(lon1) / 2)**2
-    return 6373.0 * (2 * atan2(sqrt(angle_rad), sqrt(1 - angle_rad)))
+    return Point(float(lon1), float(lat1)) \
+            .distance(Point(float(lon2), float(lat2)))
 
 
 def load_data(file_path):
@@ -74,4 +66,4 @@ if __name__ == '__main__':
         json_data,  args["lon"], args["lat"])
     print(
         "Closest ->", bar_attribute['Name'], ",", bar_attribute['Address'],
-        "| Min dist -> ", min_dist, "km")
+        "| Min dist -> ", min_dist)
